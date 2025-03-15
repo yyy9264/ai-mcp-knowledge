@@ -13,7 +13,7 @@ spring:
   ai:
     openai:
       base-url: https://pro-share-aws-api.zcyai.com/
-      api-key: sk-b1dNTAXqTai1n9kP19517d7820C2427a902cB508E6Fc7e71
+      api-key: sk-b1dNTAXqTai1n9kP19517d7820C2427*****可私聊小傅哥申请openai apikey
       embedding-model: text-embedding-ada-002
       embedding:
         options:
