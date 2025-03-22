@@ -39,3 +39,4 @@ build/
 /ai-mcp-knowledge-app/data/
 /.idea/
 /push_all_branches.sh
+/data/
