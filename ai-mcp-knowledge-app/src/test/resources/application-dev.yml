@@ -6,9 +6,9 @@ spring:
 #    web-application-type: none
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: root
-    password: XSJroot123456
-    url: jdbc:postgresql://113.44.95.208:5432/ai-rag-knowledge
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://192.168.1.109:15432/ai-rag-knowledge
     type: com.zaxxer.hikari.HikariDataSource
   ai:
     mcp:
