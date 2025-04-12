@@ -40,7 +40,7 @@ public class MCPTest {
     public void test() {
         String userInput = "获取电脑配置";
 //        userInput = "在 /Users/fuzhengwei/Desktop 文件夹下，创建 电脑.txt";
-        userInput = "我的电脑名称是小米，帮我获取我这个电脑的配置，你在评价一下我的电脑内存怎么样，算多还是算少";
+        userInput = "获取电脑配置 在 /Users/fuzhengwei/Desktop 文件夹下，创建 电脑.txt 把电脑配置写入 电脑.txt";
 
         var chatClient = chatClientBuilder
                 .defaultTools(tools)

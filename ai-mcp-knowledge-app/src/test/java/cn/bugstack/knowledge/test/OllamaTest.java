@@ -1,6 +1,5 @@
 package cn.bugstack.knowledge.test;
 
-import cn.bugstack.knowledge.utils.TokenTextSplitterWithContext;
 import com.alibaba.fastjson.JSON;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -110,14 +109,13 @@ public class OllamaTest {
 
     @Test
     public void upload() {
-        TikaDocumentReader reader = new TikaDocumentReader("data/file.txt");
+        TikaDocumentReader reader = new TikaDocumentReader("./data/file.txt");
 
         List<Document> documents = reader.get();
-        TokenTextSplitterWithContext splitter = new TokenTextSplitterWithContext(100, 20);
-        List<Document> documentSplitterList = splitter.split(documents);
+        List<Document> documentSplitterList = tokenTextSplitter.apply(documents);
 
-        documents.forEach(doc -> doc.getMetadata().put("knowledge", "宪法库"));
-        documentSplitterList.forEach(doc -> doc.getMetadata().put("knowledge", "宪法库"));
+        documents.forEach(doc -> doc.getMetadata().put("knowledge", "知识库名称v3"));
+        documentSplitterList.forEach(doc -> doc.getMetadata().put("knowledge", "知识库名称v3"));
 
         pgVectorStore.accept(documentSplitterList);
 

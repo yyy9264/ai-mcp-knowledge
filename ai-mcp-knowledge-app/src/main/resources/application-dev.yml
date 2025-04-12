@@ -6,9 +6,9 @@ spring:
 #    web-application-type: none
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: root
-    password: XSJroot123456
-    url: jdbc:postgresql://113.44.95.208:5432/ai-rag-knowledge
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://192.168.1.109:15432/ai-rag-knowledge
     type: com.zaxxer.hikari.HikariDataSource
   ai:
     mcp:
@@ -17,7 +17,7 @@ spring:
           servers-configuration: classpath:/config/mcp-servers-config.json
     openai:
       base-url: https://apis.itedus.cn
-      api-key: sk-1ZEzOdDX4krOC42BDcDbDd6830B349A69033B19f8d35AbC8
+      api-key: sk-n3fG89HM0BldyL2X93957025157c4c12A4D23e3251E5D1E2
       chat:
         options:
           model: gpt-4o
@@ -26,19 +26,13 @@ spring:
         options:
           num-batch: 1536
     ollama:
-      base-url: http://eef5c246fd434c2dbb2e-deepseek-r1-llm-api.gcs-xy1a.jdcloud.com/
+      base-url: http://58a39caa684c41bf9bed-deepseek-r1-llm-api.gcs-xy1a.jdcloud.com/
       mode:
       embedding-model: nomic-embed-text
       embedding:
         options:
           num-batch: 768
-shiro:
-  ws:
-    server:
-      enable: true
-      url: /ws/demo
-  plugin-list:
-    - cn.bugstack.knowledge.utils.BotMainService
+
 logging:
   level:
     root: info
