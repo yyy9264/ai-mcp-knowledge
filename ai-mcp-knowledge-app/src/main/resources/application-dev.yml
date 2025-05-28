@@ -13,7 +13,7 @@ spring:
   ai:
     mcp:
       client:
-        request-timeout: 180
+        request-timeout: 360s
         stdio:
           servers-configuration: classpath:/config/mcp-servers-config.json
     openai:
