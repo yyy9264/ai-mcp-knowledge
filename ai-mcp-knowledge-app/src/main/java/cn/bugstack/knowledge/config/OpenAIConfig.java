@@ -4,8 +4,10 @@ import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.DefaultChatClientBuilder;
 import org.springframework.ai.chat.client.observation.ChatClientObservationConvention;
+import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
+import org.springframework.ai.openai.OpenAiEmbeddingOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
@@ -53,7 +55,11 @@ public class OpenAIConfig {
      */
     @Bean("openAiPgVectorStore")
     public PgVectorStore pgVectorStore(OpenAiApi openAiApi, JdbcTemplate jdbcTemplate) {
-        OpenAiEmbeddingModel embeddingModel = new OpenAiEmbeddingModel(openAiApi);
+        OpenAiEmbeddingOptions openAiEmbeddingOptions =
+                OpenAiEmbeddingOptions.builder()
+                        .model("text-embedding-v4").dimensions(1536).build();
+        OpenAiEmbeddingModel embeddingModel = new OpenAiEmbeddingModel(openAiApi
+                , MetadataMode.EMBED, openAiEmbeddingOptions);
         return PgVectorStore.builder(jdbcTemplate, embeddingModel)
                 .vectorTableName("vector_store_openai")
                 .build();

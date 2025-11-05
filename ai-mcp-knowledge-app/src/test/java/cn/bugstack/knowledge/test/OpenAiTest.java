@@ -63,7 +63,7 @@ public class OpenAiTest {
         ChatResponse response = openAiChatModel.call(new Prompt(
                 "1+1",
                 OpenAiChatOptions.builder()
-                        .model("gpt-4o")
+                        .model("qwen-plus")
                         .build()));
 
         log.info("测试结果(call):{}", JSON.toJSONString(response));
@@ -79,7 +79,7 @@ public class OpenAiTest {
         ChatResponse response = openAiChatModel.call(new Prompt(
                 userMessage,
                 OpenAiChatOptions.builder()
-                        .model("gpt-4o")
+                        .model("qwen-max")
                         .build()));
 
         log.info("测试结果(images):{}", JSON.toJSONString(response));
@@ -92,7 +92,7 @@ public class OpenAiTest {
         Flux<ChatResponse> stream = openAiChatModel.stream(new Prompt(
                 "1+1",
                 OpenAiChatOptions.builder()
-                        .model("gpt-4o")
+                        .model("qwen-max")
                         .build()));
 
         stream.subscribe(
@@ -120,7 +120,7 @@ public class OpenAiTest {
         documents.forEach(doc -> doc.getMetadata().put("knowledge", "知识库名称v2"));
         documentSplitterList.forEach(doc -> doc.getMetadata().put("knowledge", "知识库名称v2"));
 
-//        pgVectorStore.accept(documentSplitterList);
+        pgVectorStore.accept(documentSplitterList);
 
         log.info("上传完成");
     }
@@ -156,7 +156,7 @@ public class OpenAiTest {
         ChatResponse chatResponse = openAiChatModel.call(new Prompt(
                 messages,
                 OpenAiChatOptions.builder()
-                        .model("gpt-4o")
+                        .model("qwen-max")
                         .build()));
 
         log.info("测试结果:{}", JSON.toJSONString(chatResponse));

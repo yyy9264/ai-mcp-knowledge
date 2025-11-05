@@ -1,21 +1,21 @@
 {
   "mcpServers": {
     "filesystem": {
-      "command": "npx",
+      "command": "D:\\software\\node.js\\npx.cmd",
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/Users/fuzhengwei/Desktop",
-        "/Users/fuzhengwei/Desktop"
+        "C:\\Users\\lenovo\\Desktop",
+        "C:\\Users\\lenovo\\Desktop"
       ]
     },
     "mcp-server-computer": {
-      "command": "java",
+      "command": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin\\java.exe",
       "args": [
         "-Dfile.encoding=utf-8",
         "-Dspring.ai.mcp.server.stdio=true",
         "-jar",
-        "/Users/fuzhengwei/Applications/apache-maven-3.8.4/repository/cn/bugstack/mcp/mcp-server-computer/1.0.0/mcp-server-computer-1.0.0.jar"
+        "C:\\Users\\lenovo\\.m2\\repository\\cn\\bugstack\\mcp\\mcp-server-computer\\1.0.0\\mcp-server-computer-1.0.0.jar"
       ]
     }
   }
