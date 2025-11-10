@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "mcp-server-csdn": {
+      "command": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot\\bin\\java.exe",
+      "args": [
+        "-Dspring.ai.mcp.server.stdio=true",
+        "-Dfile.encoding=utf-8",
+        "-jar",
+        "C:\\Users\\lenovo\\.m2\\repository\\cn\\bugstack\\mcp\\mcp-server-csdn\\1.0.0\\mcp-server-csdn-1.0.0.jar"
+      ]
+    }
+  }
+}
