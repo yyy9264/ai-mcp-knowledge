@@ -3,7 +3,10 @@ package cn.bugstack.knowledge.config;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.DefaultChatClientBuilder;
+import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
 import org.springframework.ai.chat.client.observation.ChatClientObservationConvention;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -81,6 +84,13 @@ public class OpenAIConfig {
                 .defaultOptions(OpenAiChatOptions.builder()
                         .model("qwen-plus")
                         .build())
+                .defaultAdvisors(new PromptChatMemoryAdvisor(chatMemory())) // 添加聊天记忆顾问，以便在对话中使用记忆功能
                 .build();
+    }
+    // 创建一个InMemoryChatMemory对象，用于存储聊天记录，基于内存的聊天记忆实现
+    // 这个Bean将被ChatClient使用，以便在每次对话中存储和检索聊天记录
+    @Bean
+    public ChatMemory chatMemory() {
+        return new InMemoryChatMemory();
     }
 }
