@@ -56,7 +56,8 @@ public class MCPServerJueJinJob {
             log.error("任务执行异常：{}",e);
         }
     }
-    @Scheduled(cron = "0 0 18 * * ?")
+    @Scheduled(cron = "0 0 19 * * ?")
+    //@Scheduled(cron = "0 0/3 * * * ?")
     public void exec2() {
         try {
             String userInput = """
