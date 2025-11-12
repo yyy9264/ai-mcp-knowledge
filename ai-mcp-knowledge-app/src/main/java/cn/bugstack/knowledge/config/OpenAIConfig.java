@@ -1,26 +1,29 @@
 package cn.bugstack.knowledge.config;
 
 import io.micrometer.observation.ObservationRegistry;
+import io.modelcontextprotocol.client.McpSyncClient;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.DefaultChatClientBuilder;
 import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
 import org.springframework.ai.chat.client.observation.ChatClientObservationConvention;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
-import org.springframework.ai.document.MetadataMode;
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
-import org.springframework.ai.openai.OpenAiEmbeddingOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.*;
 
 @Configuration
 public class OpenAIConfig {
@@ -60,35 +63,60 @@ public class OpenAIConfig {
      */
     @Bean("openAiPgVectorStore")
     public PgVectorStore pgVectorStore(OpenAiApi openAiApi, JdbcTemplate jdbcTemplate) {
-        OpenAiEmbeddingOptions openAiEmbeddingOptions =
-                OpenAiEmbeddingOptions.builder()
-                        .model("text-embedding-v4").dimensions(1536).build();
-        OpenAiEmbeddingModel embeddingModel = new OpenAiEmbeddingModel(openAiApi
-                , MetadataMode.EMBED, openAiEmbeddingOptions);
+        OpenAiEmbeddingModel embeddingModel = new OpenAiEmbeddingModel(openAiApi);
         return PgVectorStore.builder(jdbcTemplate, embeddingModel)
                 .vectorTableName("vector_store_openai")
                 .build();
     }
+    // 整合多个MCP服务器提供的工具
+    // 确保工具的唯一性
+    // 为ChatClient提供统一的工具访问接口
+    @Bean("syncMcpToolCallbackProvider")
+    public SyncMcpToolCallbackProvider syncMcpToolCallbackProvider(List<McpSyncClient> mcpClients) {
+//        mcpClients.remove(0);
 
-    @Bean
-    public ChatClient.Builder chatClientBuilder(OpenAiChatModel openAiChatModel) {
-        return new DefaultChatClientBuilder(openAiChatModel, ObservationRegistry.NOOP, (ChatClientObservationConvention) null);
+        // 用于记录 name 和其对应的 index
+        Map<String, Integer> nameToIndexMap = new HashMap<>();
+        // 用于记录重复的 index
+        Set<Integer> duplicateIndices = new HashSet<>();
+
+        // 遍历 mcpClients 列表
+        for (int i = 0; i < mcpClients.size(); i++) {
+            String name = mcpClients.get(i).getServerInfo().name();
+            if (nameToIndexMap.containsKey(name)) {
+                // 如果 name 已经存在，记录当前 index 为重复
+                duplicateIndices.add(i);
+            } else {
+                // 否则，记录 name 和 index
+                nameToIndexMap.put(name, i);
+            }
+        }
+
+        // 删除重复的元素，从后往前删除以避免影响索引
+        List<Integer> sortedIndices = new ArrayList<>(duplicateIndices);
+        sortedIndices.sort(Collections.reverseOrder());
+        for (int index : sortedIndices) {
+            mcpClients.remove(index);
+        }
+
+        return new SyncMcpToolCallbackProvider(mcpClients);
     }
 
-    //这个配置使得应用能够与AI模型进行交互，并利用工具来扩展AI的能力，例如访问文件系统、查询数据库等。
     @Bean
-    public ChatClient chatClient(OpenAiChatModel openAiChatModel, ToolCallbackProvider tools) {
+    public ChatClient chatClient(OpenAiChatModel openAiChatModel, @Qualifier("syncMcpToolCallbackProvider") ToolCallbackProvider syncMcpToolCallbackProvider, ChatMemory chatMemory) {
         DefaultChatClientBuilder defaultChatClientBuilder = new DefaultChatClientBuilder(openAiChatModel, ObservationRegistry.NOOP, (ChatClientObservationConvention) null);
         return defaultChatClientBuilder
-                .defaultTools(tools)
-                .defaultOptions(OpenAiChatOptions.builder()
-                        .model("qwen-plus")
-                        .build())
-                .defaultAdvisors(new PromptChatMemoryAdvisor(chatMemory())) // 添加聊天记忆顾问，以便在对话中使用记忆功能
+                .defaultTools(syncMcpToolCallbackProvider) // 配置 MCP 工具调用器
+//       chat:
+//        options:
+//          model: gpt-4.1 yml配置方式可以注释掉这里的代码。
+//                .defaultOptions(OpenAiChatOptions.builder()
+//                        .model("qwen-plus")
+//                        .build())
+                .defaultAdvisors(new PromptChatMemoryAdvisor(chatMemory))
                 .build();
     }
-    // 创建一个InMemoryChatMemory对象，用于存储聊天记录，基于内存的聊天记忆实现
-    // 这个Bean将被ChatClient使用，以便在每次对话中存储和检索聊天记录
+
     @Bean
     public ChatMemory chatMemory() {
         return new InMemoryChatMemory();

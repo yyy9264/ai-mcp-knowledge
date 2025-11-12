@@ -21,24 +21,13 @@ import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvis
 @SpringBootTest
 public class MCPTest {
 
-    @Resource
-    private ChatClient.Builder chatClientBuilder;
 
     @Resource
     private ChatClient chatClient;
 
-    @Autowired
-    private ToolCallbackProvider tools;
-
     @Test
     public void test_tool() {
         String userInput = "有哪些工具可以使用";
-        var chatClient = chatClientBuilder
-                .defaultTools(tools)
-                .defaultOptions(OpenAiChatOptions.builder()
-                        .model("qwen-max")
-                        .build())
-                .build();
 
         System.out.println("\n>>> QUESTION: " + userInput);
         System.out.println("\n>>> ASSISTANT: " + chatClient.prompt(userInput).call().content());
@@ -55,12 +44,12 @@ public class MCPTest {
                 "4. 将第二步分析出的实际配置信息写入文件，不要使用任何占位符或变量\n" +
                 "5. 确保写入的是真实的系统信息，如实际的处理器型号、内存大小等\n" +
                 "注意：必须使用从工具获取的实际数据，不要使用示例数据或模板";
-        var chatClient = chatClientBuilder
-                .defaultTools(tools)
-                .defaultOptions(OpenAiChatOptions.builder()
-                        .model("qwen-max")
-                        .build())
-                .build();
+//        var chatClient = chatClientBuilder
+//                .defaultTools(tools)
+//                .defaultOptions(OpenAiChatOptions.builder()
+//                        .model("qwen-max")
+//                        .build())
+//                .build();
 
         System.out.println("\n>>> QUESTION: " + userInput);
         System.out.println("\n>>> ASSISTANT: " + chatClient.prompt(userInput).call().content());
